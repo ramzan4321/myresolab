@@ -29,6 +29,7 @@ class User(AbstractUser):
     industry_type = models.CharField(max_length=100,default="Microfinance")
     category = models.CharField(max_length=100,default="Resource Provider")
     state = models.CharField(max_length=100,default='Gujarat')
+    city = models.CharField(max_length=100,default='Kanpur')
     date_of_birth = models.DateField(null=False,blank=False,default='2001-01-01')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="my_user",default="1")
     is_superuser = models.BooleanField(default=False)
@@ -55,12 +56,12 @@ class GeneralProfile(models.Model):
     address = models.CharField(max_length=255, blank=False, null=False)
     location_state = models.CharField(max_length=255, blank=False, null=False)
     location_district = models.CharField(max_length=255, blank=False, null=False)
-    min_salary = models.IntegerField()
-    max_salary = models.IntegerField()
+    min_salary = models.IntegerField() # work as current_salary for ResourceProvider
+    max_salary = models.IntegerField() # work as expected_salary for ResourceProvider
     phone_number = models.CharField(max_length=255, blank=False, null=False)
     alternate_phone_number = models.CharField(max_length=255, blank=False, null=False)
     is_user_active = models.BooleanField(default=True)
-    make_into_as_public = models.TextField(null=True, blank=True)
+    make_into_as_public = models.TextField(null=True, blank=True) # work as description for ResourceProvide
 
     # About the organization
     organization_name = models.CharField(max_length=255, blank=False, null=False)

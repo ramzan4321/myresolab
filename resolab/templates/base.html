@@ -42,7 +42,7 @@
           <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'home' %}">resolab</a>
+          <a class="navbar-brand" href="{% url 'home' %}"><h3>Resolab</h3></a>
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
@@ -50,9 +50,21 @@
                 <a class="nav-link" href="{% url 'home' %}">Home <span class="visually-hidden">(current)</span></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}">About</a>
+                <a class="nav-link" href="/api/resource_provider/"><b style="color: black;">Resource Available</b></a>
               </li>
-              {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="/api/resource_required/"><b style="color: black;">Resource Required</b></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/api/login/"><b style="color: black;">SignIn</b></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/api/new_user/"><b style="color: black;">SignUp</b></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'about' %}"><b style="color: black;">About</b></a>
+              </li>
+              <!--{% if request.user.is_authenticated %}
                 <li class="nav-item">
                   {# URL provided by django-allauth/account/urls.py #}
                   <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% translate "My Profile" %}</a>
@@ -72,7 +84,7 @@
                   {# URL provided by django-allauth/account/urls.py #}
                   <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% translate "Sign In" %}</a>
                 </li>
-              {% endif %}
+              {% endif %}-->
             </ul>
           </div>
         </div>
@@ -92,7 +104,7 @@
       {% endif %}
 
       {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
+        <h1 class="text-center">Welcome to The Resolab</h1>
       {% endblock content %}
 
     </div> <!-- /container -->

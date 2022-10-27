@@ -18,6 +18,7 @@ from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_422_UNPROCESSABLE_ENTITY, HTTP_406_NOT_ACCEPTABLE
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.db.models import Q
@@ -28,7 +29,7 @@ from rest_framework.views import APIView
 from yaml import serialize
 from resources.renderers import MyRenderer
 from resources.models import ResourceProvider, ResourceSeeker, ResourceSeekerServices
-from .serializers import UserUpdateSerializer, LoginSerializer, ProviderSerializer, UserSerializer , SeekerSerializer , SeekerServiceSerializer, SeekerSerializerCardView, ProviderCardViewSerializer, ProviderCardCreateSerializer
+from .serializers import UserPasswordResetSerializer, SendPasswordResetEmailSerializer, UserChangePasswordSerializer, UserUpdateSerializer, LoginSerializer, ProviderSerializer, UserSerializer , SeekerSerializer , SeekerServiceSerializer, SeekerSerializerCardView, ProviderCardViewSerializer, ProviderCardCreateSerializer
 
 User = get_user_model()
 
@@ -465,3 +466,39 @@ class StateWiseRequiredView(ListAPIView):
         
         else:
             return ResourceProvider.objects.all()
+
+#--------------------------------------------------UserChangePasswordView----------------------------------------------------------
+
+class UserChangePasswordView(APIView):
+    renderer_classes = [MyRenderer]
+    def post(self, request, format=None):
+        serializer = UserChangePasswordSerializer(data = request.data,
+        context={'user': request.user})
+        if serializer.is_valid(raise_exception=True):
+            return Response({'msg':'Password changed successfully'},status=HTTP_200_OK)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+class SendPasswordResetEmailView(APIView):
+    authentication_classes = []
+    permission_classes = []
+    renderer_classes = [MyRenderer]
+    def post(self, request, format=None):
+        serializer = SendPasswordResetEmailSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            return Response({'msg':'Password Reset link send. Please check your Email'},status=HTTP_200_OK)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+    
+    
+
+class UserPasswordResetView(APIView):
+    renderer_classes = [MyRenderer]
+    permission_classes = []
+    authentication_classes = []
+    def post(self, request,uid,token, format=None):
+        serializer = UserPasswordResetSerializer(data=request.data, context = {'uid':uid,'token':token})
+        if serializer.is_valid(raise_exception=True):
+            return Response({'msg':'Password Reset successfully'},status=HTTP_200_OK)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        
+    

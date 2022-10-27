@@ -314,3 +314,67 @@ class SubscriptionPayment(models.Model):
     error_reason = models.CharField(max_length=500 , blank=True , null=True)
     created_at = models.DateTimeField(auto_now=False , blank=True)
     amount_unit = models.CharField(choices=AMOUNT_UNIT, max_length=100 , blank=True , null=True)
+
+
+class ProfessionalOverView(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    designation = models.CharField(max_length=255, blank=False, null=False)
+    years_of_experience = models.FloatField()
+    industry = models.CharField(max_length=255, blank=False, null=False)
+    leadership_experience = models.BooleanField(default=False)
+    how_many_years = models.FloatField()
+    interested_secondary_positions = models.CharField(max_length=255, blank=True, null=True)
+
+
+
+class SkillRanking(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    primary_skills_with_experience = models.TextField()
+    secondory_skills_with_experience = models.TextField()
+
+
+
+class SocialProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    github = models.TextField(blank=True, null=True)
+    linkdin = models.TextField(blank=True, null=True)
+    personal = models.TextField(blank=True, null=True)
+
+    class Meta:
+       abstract = True
+
+
+class AdditionalProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=255, blank=False, null=False)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="add_profile")
+    profile_pic = models.ImageField(upload_to="profile/", null=True, blank=True)
+    date_joined = models.DateTimeField()
+    registered_region = models.CharField(max_length=255, blank=False, null=False)
+    is_verified = models.BooleanField(default=False)
+    is_subscribed = models.BooleanField(default=False)
+    is_job_seeker = models.BooleanField(default=False)
+    is_company = models.BooleanField(default=False)
+    is_job_provider = models.BooleanField(default=False)
+    industry = models.CharField(max_length=255, blank=True, null=True)
+
+
+class PendingVerifications(models.Model):
+    CardType=models.CharField(max_length=120)
+    CardId=models.CharField(max_length=12)
+    UserNname=models.CharField(max_length=120)
+    def __str__(self):
+        return '%s' % self.CardId
+
+
+class ConnectForm(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    intrested = models.BooleanField(default=False)    
+    next_process = models.BooleanField(default=False)    
+    share_info = models.BooleanField(default=False)    
+    alt_phone_number = models.CharField(max_length=17,blank=True )
+    wa_number = models.CharField(max_length=17,blank=True )
+    receiver = models.CharField(max_length=400, blank=True)
+
+    def __str__(self):
+        return 'ConnectForm: %s' % (self.id)

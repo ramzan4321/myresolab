@@ -14,9 +14,9 @@
         callback_url: "{{callback_url}}",
         redirect: true,
         prefill: {
-            "name": "Gaurav Kumar",
-            "email": "gaurav.kumar@example.com",
-            "contact": "9999999999"
+            "name": "{{user.first_name}} {{user.last_name}} ",
+            "email": "{{user.email}}",
+            "contact": "{{user.phone}}"
         },
         notes: {
             "address": "Razorpay Corporate Office"

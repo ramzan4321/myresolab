@@ -15,6 +15,10 @@ urlpatterns = [
 
     path('gettoken/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refreshtoken/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    path('changepassword/', views.UserChangePasswordView.as_view(),name='changepassword'),
+    path('send-reset-password-email/', views.SendPasswordResetEmailView.as_view(),name='send-reset-password-email'),
+    path('reset-password/<uid>/<token>/', views.UserPasswordResetView.as_view(),name='reset-password'),
     #---------------------------    Start Registration Block    --------------------------------
 
     path('users/', views.UserList.as_view()),
@@ -63,5 +67,5 @@ urlpatterns = [
     path('checkout/', CheckoutSubscriptionData.as_view(), name='checkout_subscription_data'),
     path('callback/', SubscriptionCallbackEndpoint.as_view(), name='callback'),
     
-    path('paymentstatus/', Payment.as_view(), name='payment'),
+    path('paymentstatus/<int:code>', Payment.as_view(), name='payment'),
 ]

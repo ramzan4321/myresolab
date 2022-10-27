@@ -35,14 +35,17 @@ class Payment(generics.ListAPIView):
         context['message'] = "Successfully Paid!"
         return context'''
     
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = SubscriptionOrderSerializer(queryset, many=True)
+    def list(self, request, code):
+        if code != 1:
+            return Response({'Status':'Payment failed due to some reason!'})
+        else:
+            queryset = self.get_queryset()
+            serializer = SubscriptionOrderSerializer(queryset, many=True)
 
-        # append serializer's data with some additional value
-        response_list = serializer.data 
-        response_list.append({"Status":"Successfully Paid!"})
-        return Response(response_list)
+            # append serializer's data with some additional value
+            response_list = serializer.data 
+            response_list.append({"Status":"Successfully Paid!"})
+            return Response(response_list)
 
     def get_queryset(self):
         user = self.request.user
@@ -65,9 +68,8 @@ class CheckoutSubscriptionData(APIView):
             amount = amount + ((amount * subscription_plan_obj.tax)/100)
             currency = subscription_plan_obj.currency
             user_prof = User.objects.get(email=request.user)
-            user_exist = SubscriptionOrder.objects.filter(order_by=request.user).last()
-            print(user_exist)
-            if user_exist:
+            user_exit = SubscriptionOrder.objects.filter(order_by=request.user).last()
+            if user_exit:
                 if UserSubscription.objects.filter(user_id=request.user,is_expired=False).last():
                     return Response({'Status':'Failed', 'Reason':'Already have active plan.'})
 
@@ -104,7 +106,7 @@ class CheckoutSubscriptionData(APIView):
 @method_decorator(csrf_exempt, name='dispatch')
 class SubscriptionCallbackEndpoint(View):
     def post(self, request):
-        
+        print("1st stage")
         '''if 'razorpay_payment_id' in request.POST:
             print('Signature present')
             return render(request, "callback.html", context={"status": "Success"})
@@ -113,11 +115,14 @@ class SubscriptionCallbackEndpoint(View):
             return render(request, "callback.html", context={"status": "Signature Not present"})'''
         try:
            
-            
+            print("2nd stage")
             # get the required parameters from post request.
             payment_id = request.POST.get('razorpay_payment_id', '')
+            print(payment_id)
             razorpay_order_id = request.POST.get('razorpay_order_id', '')
+            print(razorpay_order_id)
             signature = request.POST.get('razorpay_signature', '')
+            print(signature)
             params_dict = {
                 'razorpay_order_id': razorpay_order_id,
                 'razorpay_payment_id': payment_id,
@@ -208,16 +213,17 @@ class SubscriptionCallbackEndpoint(View):
                             user_subscription_serializer.save()
                             print("User Subscription Save")
                             request.session['msg'] = 'Your Payment is Successful'
-                            return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus")
+                            return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus/1")
                     else:
-                        return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus")
+                        return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus/0")
                     
                 except:
-                    return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus")
+                    return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus/0")
             else:
-                return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus")
+                return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus/0")
         except:
-            return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus")
+            print("3rd stage")
+            return HttpResponseRedirect("http://127.0.0.1:8000/api/paymentstatus/0")
 
 
 class IsUserSubscribed(APIView):
